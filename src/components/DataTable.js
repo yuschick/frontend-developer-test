@@ -13,6 +13,7 @@ import {
   CircularProgress,
   Typography,
 } from "@material-ui/core";
+import format from "date-fns/format";
 
 const useStyles = makeStyles({
   table: {
@@ -62,7 +63,7 @@ export default function BasicTable({ fetch, caption }) {
             {data.map((item) => (
               <TableRow key={item.id}>
                 <TableCell component="th" scope="row">
-                  {item.timestamp}
+                  {format(item.timestamp, "yyyy-MM-d")}
                 </TableCell>
                 <TableCell>{item.id}</TableCell>
                 <TableCell>{item.diff[0].oldValue}</TableCell>
