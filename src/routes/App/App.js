@@ -9,11 +9,11 @@ const App = () => {
     <StyledPage>
       <DataTable
         caption="A table of historical user updates"
-        fetch={api.getUsersDiff}
+        request={api.getUsersDiff}
       />
       <DataTable
         caption="A table of historical project updates"
-        fetch={api.getProjectsDiff}
+        request={api.getProjectsDiff}
       />
     </StyledPage>
   );

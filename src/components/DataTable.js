@@ -1,51 +1,55 @@
-import React, { Fragment, useState, useEffect, useCallback } from "react";
+import React, { Fragment, useState, useEffect } from "react";
 import styled from "styled-components";
 import { makeStyles } from "@material-ui/core/styles";
 import {
+  Box,
   Table,
   TableBody,
   TableCell,
   TableContainer,
   TableHead,
   TableRow,
+  TableSortLabel,
   Paper,
-  Button,
   CircularProgress,
-  Typography,
 } from "@material-ui/core";
+import { func, string } from "prop-types";
 import format from "date-fns/format";
 
-const useStyles = makeStyles({
-  table: {
-    minWidth: 650,
-  },
+import DataTableActions from "./DataTableActions";
+import ScreenReaderText from "./ScreenReaderText";
+
+import useDataFetch from "../hooks/useDataFetch";
+
+const SortDirection = Object.freeze({ asc: "asc", desc: "desc" });
+const InvertSortDirection = Object.freeze({
+  [SortDirection.asc]: SortDirection.desc,
+  [SortDirection.desc]: SortDirection.asc,
 });
 
-export default function BasicTable({ fetch, caption }) {
+const DataTable = ({ request, caption }) => {
   const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const { loading, error, complete, rawData, fetchData } = useDataFetch();
+  const [sortDirection, setSortDirection] = useState(SortDirection.desc);
 
-  const fetchData = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-
-    try {
-      const result = await fetch();
-      console.log("DATA", result.data);
-      setData([...data, ...result.data]);
-    } catch {
-      setError(true);
-    } finally {
-      setLoading(false);
-    }
-  }, [data, fetch]);
+  const classes = useStyles();
 
   useEffect(() => {
-    if (data.length) return;
-    fetchData();
-  }, [data, fetchData]);
-  const classes = useStyles();
+    if (rawData.length || !request) return;
+    fetchData(request);
+  }, [rawData, fetchData, request]);
+
+  useEffect(() => {
+    if (!rawData.length) return;
+
+    const sorted = [...rawData].sort((a, b) =>
+      sortDirection === SortDirection.desc
+        ? b.timestamp - a.timestamp
+        : a.timestamp - b.timestamp
+    );
+
+    setData(sorted);
+  }, [rawData, sortDirection]);
 
   return (
     <Fragment>
@@ -53,16 +57,43 @@ export default function BasicTable({ fetch, caption }) {
         <Table className={classes.table} aria-label={caption}>
           <TableHead>
             <TableRow>
-              <TableCell>Date</TableCell>
+              <TableCell sortDirection={sortDirection}>
+                <TableSortLabel
+                  active
+                  disabled={loading}
+                  direction={sortDirection}
+                  onClick={() =>
+                    setSortDirection(InvertSortDirection[sortDirection])
+                  }
+                >
+                  Date
+                  <ScreenReaderText>
+                    Table sorted
+                    {sortDirection === SortDirection.asc
+                      ? "ascending"
+                      : "descending"}
+                    .
+                  </ScreenReaderText>
+                </TableSortLabel>
+              </TableCell>
               <TableCell>User ID</TableCell>
               <TableCell>Old Value</TableCell>
               <TableCell>New Value</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
+            {!data.length && loading && (
+              <TableRow>
+                <TableCell colSpan={4}>
+                  <TableSpinnerContainer>
+                    <CircularProgress />
+                  </TableSpinnerContainer>
+                </TableCell>
+              </TableRow>
+            )}
             {data.map((item) => (
               <TableRow key={item.id}>
-                <TableCell component="th" scope="row">
+                <TableCell className={classes.date}>
                   {format(item.timestamp, "yyyy-MM-d")}
                 </TableCell>
                 <TableCell>{item.id}</TableCell>
@@ -74,29 +105,36 @@ export default function BasicTable({ fetch, caption }) {
         </Table>
       </TableContainer>
 
-      <FooterContainer>
-        {loading ? (
-          <CircularProgress />
-        ) : (
-          <Fragment>
-            {error && (
-              <Typography color="error" role="alert">
-                We had problems fetching your data. Please try again.
-              </Typography>
-            )}
-            <Button variant="contained" color="primary" onClick={fetchData}>
-              {error ? "Retry" : "Load more"}
-            </Button>
-          </Fragment>
-        )}
-      </FooterContainer>
+      {!!data.length && (
+        <DataTableActions
+          fetch={() => fetchData(request)}
+          loading={loading}
+          error={error}
+          complete={complete}
+        />
+      )}
     </Fragment>
   );
-}
+};
 
-const FooterContainer = styled.div`
-  display: grid;
-  grid-gap: var(--spacing-two);
+const TableSpinnerContainer = styled(Box)`
+  display: flex;
+  justify-content: center;
   margin: var(--spacing-two) 0;
-  place-items: center;
 `;
+
+const useStyles = makeStyles({
+  table: {
+    minWidth: 650,
+  },
+  date: {
+    whiteSpace: "nowrap",
+  },
+});
+
+DataTable.props = {
+  request: func.isRequired,
+  caption: string.isRequired,
+};
+
+export default DataTable;
