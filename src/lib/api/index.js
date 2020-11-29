@@ -1,4 +1,4 @@
-import { usersDiff, projectsDiff } from './data';
+import { usersDiff, projectsDiff } from "./data";
 
 const DEFAULT_DELAY = 2000;
 const PAGE_SIZE = 3;
@@ -17,7 +17,7 @@ const resolveOrRejectCollection = (timesCalled, collection) => () => {
       if (timesCalled % 2 === 0) {
         return reject({
           code: 500,
-          error: 'Uknown error',
+          error: "Uknown error",
         });
       }
 
@@ -28,7 +28,7 @@ const resolveOrRejectCollection = (timesCalled, collection) => () => {
         offset: hasItems ? sliceStart : totalItems,
         total: totalItems,
       });
-    }, DEFAULT_DELAY)
+    }, DEFAULT_DELAY);
   });
 };
 

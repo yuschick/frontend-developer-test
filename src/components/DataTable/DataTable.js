@@ -66,57 +66,60 @@ const DataTable = ({
         summary={summary}
         data-test-id="table-data"
       >
-        {!tableData.length && loading ? (
-          <Box display="flex" justifyContent="center" py={2}>
-            <CircularProgress data-test-id="table-data-spinner" />
-          </Box>
-        ) : (
-          <Table className={classes.table}>
-            <ScreenReaderText as="caption">{title}</ScreenReaderText>
-            <TableHead>
+        <Table className={classes.table}>
+          <ScreenReaderText as="caption">{title}</ScreenReaderText>
+          <TableHead>
+            <TableRow>
+              {data.cols.map((col) => (
+                <TableCell key={uuidv4()}>
+                  {col.sortable ? (
+                    <TableSortLabel
+                      active={sortBy === col.id}
+                      disabled={loading}
+                      direction={sortDirection}
+                      onClick={() => {
+                        sortBy !== col.id && setSortBy(col.id);
+                        setSortDirection(InvertSortDirection[sortDirection]);
+                      }}
+                      data-test-id={`table-data-button-sort`}
+                    >
+                      {col.label}
+                      <ScreenReaderText>
+                        Table sorted
+                        {true ? "ascending" : "descending"}.
+                      </ScreenReaderText>
+                    </TableSortLabel>
+                  ) : (
+                    col.label
+                  )}
+                </TableCell>
+              ))}
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {!tableData.length && loading && (
               <TableRow>
-                {data.cols.map((col) => (
-                  <TableCell key={uuidv4()}>
-                    {col.sortable ? (
-                      <TableSortLabel
-                        active={sortBy === col.id}
-                        disabled={loading}
-                        direction={sortDirection}
-                        onClick={() => {
-                          sortBy !== col.id && setSortBy(col.id);
-                          setSortDirection(InvertSortDirection[sortDirection]);
-                        }}
-                        data-test-id={`table-data-button-sort`}
-                      >
-                        {col.label}
-                        <ScreenReaderText>
-                          Table sorted
-                          {true ? "ascending" : "descending"}.
-                        </ScreenReaderText>
-                      </TableSortLabel>
-                    ) : (
-                      col.label
-                    )}
+                <TableCell colSpan={data.cols.length}>
+                  <Box className={classes.loading} py={2}>
+                    <CircularProgress data-test-id="table-data-spinner" />
+                  </Box>
+                </TableCell>
+              </TableRow>
+            )}
+            {tableData.map((row) => (
+              <TableRow key={uuidv4()}>
+                {Object.keys(row).map((k, i) => (
+                  <TableCell
+                    key={uuidv4()}
+                    data-test-id={`table-data-cell-${data.cols[i].id}`}
+                  >
+                    {row[k].label}
                   </TableCell>
                 ))}
               </TableRow>
-            </TableHead>
-            <TableBody>
-              {tableData.map((row) => (
-                <TableRow key={uuidv4()}>
-                  {Object.keys(row).map((k, i) => (
-                    <TableCell
-                      key={uuidv4()}
-                      data-test-id={`table-data-cell-${data.cols[i].id}`}
-                    >
-                      {row[k].label}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        )}
+            ))}
+          </TableBody>
+        </Table>
       </TableContainer>
 
       {!!data.rows.length && (
@@ -134,6 +137,11 @@ const DataTable = ({
 const useStyles = makeStyles({
   table: {
     minWidth: 650,
+  },
+  loading: {
+    display: "flex",
+    justifyContent: "center",
+    maxWidth: "calc(100vw - calc(var(--spacing-three) * 2))",
   },
 });
 
