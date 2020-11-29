@@ -1,8 +1,8 @@
 import React from "react";
 import styled from "styled-components";
 
-const ScreenReaderText = ({ children }) => {
-  return <Hidden>{children}</Hidden>;
+const ScreenReaderText = ({ as, children }) => {
+  return <Hidden as={as}>{children}</Hidden>;
 };
 
 const Hidden = styled.span`

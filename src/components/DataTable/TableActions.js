@@ -12,20 +12,31 @@ const TableActions = ({ fetch, loading, error, complete }) => {
   }, [isMounted]);
 
   return (
-    <ActionsContainer>
+    <ActionsContainer data-test-id="table-actions">
       {isMounted && loading ? (
-        <CircularProgress />
+        <CircularProgress data-test-id="table-actions-spinner" />
       ) : (
         <Fragment>
           {error && (
-            <Typography color="error" role="alert">
+            <Typography
+              color="error"
+              role="alert"
+              data-test-id="table-actions-text-error"
+            >
               We had problems fetching your data. Please try again.
             </Typography>
           )}
           {complete ? (
-            <Typography>All historical data shown.</Typography>
+            <Typography data-test-id="table-actions-text-complete">
+              All historical data shown.
+            </Typography>
           ) : (
-            <Button variant="contained" color="primary" onClick={fetch}>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={fetch}
+              data-test-id="table-actions-button-fetch"
+            >
               {error ? "Retry" : "Load more"}
             </Button>
           )}

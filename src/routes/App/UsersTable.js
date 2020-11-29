@@ -37,6 +37,13 @@ const UsersTable = () => {
   return (
     <DataTable
       fetchData={fetchData}
+      title="Users table"
+      summary="A table of historical user updates"
+      loading={loading}
+      error={error}
+      complete={complete}
+      initialSortBy="date"
+      initialSort={SortDirection.desc}
       data={{
         cols: [
           {
@@ -62,12 +69,6 @@ const UsersTable = () => {
         ],
         rows: formatTableRowData(data),
       }}
-      caption="A table of historical user updates"
-      loading={loading}
-      error={error}
-      complete={complete}
-      initialSortBy="date"
-      initialSort={SortDirection.desc}
     />
   );
 };

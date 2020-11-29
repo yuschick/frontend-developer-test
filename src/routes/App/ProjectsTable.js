@@ -37,6 +37,13 @@ const ProjectsTable = () => {
   return (
     <DataTable
       fetchData={fetchData}
+      title="Projects table"
+      summary="A table of historical project updates"
+      loading={loading}
+      error={error}
+      complete={complete}
+      initialSortBy="date"
+      initialSort={SortDirection.desc}
       data={{
         cols: [
           {
@@ -62,12 +69,6 @@ const ProjectsTable = () => {
         ],
         rows: formatTableRowData(data),
       }}
-      caption="A table of historical project updates"
-      loading={loading}
-      error={error}
-      complete={complete}
-      initialSortBy="date"
-      initialSort={SortDirection.desc}
     />
   );
 };

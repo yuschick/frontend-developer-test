@@ -1,6 +1,6 @@
 import React from "react";
 import { shallow } from "enzyme";
-import { App } from "./App";
+import App from "./App";
 
 describe("<App />", () => {
   let wrapper;
@@ -10,8 +10,14 @@ describe("<App />", () => {
   });
 
   describe("render()", () => {
-    it("renders the Box", () => {
-      expect(wrapper.find({ "data-testid": "app-box" })).toHaveLength(1);
+    it("renders the App", () => {
+      expect(wrapper.find({ "data-test-id": "app" })).toHaveLength(1);
+    });
+  });
+
+  describe("render()", () => {
+    it("renders the users and projects tables", () => {
+      expect(wrapper.find({ "data-test-class": "app-table" })).toHaveLength(2);
     });
   });
 });

@@ -6,9 +6,9 @@ import ProjectsTable from "./ProjectsTable";
 
 const App = () => {
   return (
-    <StyledPage>
-      <UsersTable />
-      <ProjectsTable />
+    <StyledPage data-test-id="app">
+      <UsersTable data-test-class="app-table" />
+      <ProjectsTable data-test-class="app-table" />
     </StyledPage>
   );
 };

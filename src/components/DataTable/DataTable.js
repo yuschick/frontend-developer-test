@@ -30,13 +30,14 @@ import { SortDirection, InvertSortDirection } from "../../types/sortDirection";
 
 const DataTable = ({
   fetchData,
-  data,
   loading,
   error,
   complete,
-  caption,
+  summary,
   initialSortBy,
   initialSort,
+  title,
+  data,
 }) => {
   const [tableData, setTableData] = useState([]);
   const [sortBy, setSortBy] = useState(initialSortBy);
@@ -60,8 +61,13 @@ const DataTable = ({
 
   return (
     <Fragment>
-      <TableContainer component={Paper}>
-        <Table className={classes.table} aria-label={caption}>
+      <TableContainer
+        component={Paper}
+        summary={summary}
+        data-test-id="table-data"
+      >
+        <Table className={classes.table}>
+          <ScreenReaderText as="caption">{title}</ScreenReaderText>
           <TableHead>
             <TableRow>
               {data.cols.map((col) => (
@@ -75,6 +81,7 @@ const DataTable = ({
                         sortBy !== col.id && setSortBy(col.id);
                         setSortDirection(InvertSortDirection[sortDirection]);
                       }}
+                      data-test-id={`table-data-button-sort`}
                     >
                       {col.label}
                       <ScreenReaderText>
@@ -94,15 +101,20 @@ const DataTable = ({
               <TableRow>
                 <TableCell colSpan={data.cols.length}>
                   <Box display="flex" justifyContent="center" py={2}>
-                    <CircularProgress />
+                    <CircularProgress data-test-id="table-data-spinner" />
                   </Box>
                 </TableCell>
               </TableRow>
             )}
             {tableData.map((row) => (
               <TableRow key={uuidv4()}>
-                {Object.keys(row).map((k) => (
-                  <TableCell key={uuidv4()}>{row[k].label}</TableCell>
+                {Object.keys(row).map((k, i) => (
+                  <TableCell
+                    key={uuidv4()}
+                    data-test-id={`table-data-cell-${data.cols[i].id}`}
+                  >
+                    {row[k].label}
+                  </TableCell>
                 ))}
               </TableRow>
             ))}
@@ -130,6 +142,13 @@ const useStyles = makeStyles({
 
 DataTable.propTypes = {
   fetchData: func.isRequired,
+  loading: bool.isRequired,
+  error: bool.isRequired,
+  complete: bool.isRequired,
+  summary: string.isRequired,
+  initialSortBy: string.isRequired,
+  initialSort: oneOf(Object.keys(SortDirection)).isRequired,
+  title: string.isRequired,
   data: shape({
     cols: arrayOf(
       shape({
@@ -158,12 +177,6 @@ DataTable.propTypes = {
       })
     ),
   }).isRequired,
-  loading: bool.isRequired,
-  error: bool.isRequired,
-  complete: bool.isRequired,
-  caption: string.isRequired,
-  initialSortBy: string.isRequired,
-  initialSort: oneOf(Object.keys(SortDirection)).isRequired,
 };
 
 export default DataTable;
