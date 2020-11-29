@@ -21,13 +21,17 @@ const TableActions = ({ fetch, loading, error, complete }) => {
             <Typography
               color="error"
               role="alert"
+              align="center"
               data-test-id="table-actions-text-error"
             >
               We had problems fetching your data. Please try again.
             </Typography>
           )}
           {complete ? (
-            <Typography data-test-id="table-actions-text-complete">
+            <Typography
+              data-test-id="table-actions-text-complete"
+              align="center"
+            >
               All historical data shown.
             </Typography>
           ) : (

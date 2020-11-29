@@ -66,60 +66,57 @@ const DataTable = ({
         summary={summary}
         data-test-id="table-data"
       >
-        <Table className={classes.table}>
-          <ScreenReaderText as="caption">{title}</ScreenReaderText>
-          <TableHead>
-            <TableRow>
-              {data.cols.map((col) => (
-                <TableCell key={uuidv4()}>
-                  {col.sortable ? (
-                    <TableSortLabel
-                      active={sortBy === col.id}
-                      disabled={loading}
-                      direction={sortDirection}
-                      onClick={() => {
-                        sortBy !== col.id && setSortBy(col.id);
-                        setSortDirection(InvertSortDirection[sortDirection]);
-                      }}
-                      data-test-id={`table-data-button-sort`}
-                    >
-                      {col.label}
-                      <ScreenReaderText>
-                        Table sorted
-                        {true ? "ascending" : "descending"}.
-                      </ScreenReaderText>
-                    </TableSortLabel>
-                  ) : (
-                    col.label
-                  )}
-                </TableCell>
-              ))}
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {!tableData.length && loading && (
+        {!tableData.length && loading ? (
+          <Box display="flex" justifyContent="center" py={2}>
+            <CircularProgress data-test-id="table-data-spinner" />
+          </Box>
+        ) : (
+          <Table className={classes.table}>
+            <ScreenReaderText as="caption">{title}</ScreenReaderText>
+            <TableHead>
               <TableRow>
-                <TableCell colSpan={data.cols.length}>
-                  <Box display="flex" justifyContent="center" py={2}>
-                    <CircularProgress data-test-id="table-data-spinner" />
-                  </Box>
-                </TableCell>
-              </TableRow>
-            )}
-            {tableData.map((row) => (
-              <TableRow key={uuidv4()}>
-                {Object.keys(row).map((k, i) => (
-                  <TableCell
-                    key={uuidv4()}
-                    data-test-id={`table-data-cell-${data.cols[i].id}`}
-                  >
-                    {row[k].label}
+                {data.cols.map((col) => (
+                  <TableCell key={uuidv4()}>
+                    {col.sortable ? (
+                      <TableSortLabel
+                        active={sortBy === col.id}
+                        disabled={loading}
+                        direction={sortDirection}
+                        onClick={() => {
+                          sortBy !== col.id && setSortBy(col.id);
+                          setSortDirection(InvertSortDirection[sortDirection]);
+                        }}
+                        data-test-id={`table-data-button-sort`}
+                      >
+                        {col.label}
+                        <ScreenReaderText>
+                          Table sorted
+                          {true ? "ascending" : "descending"}.
+                        </ScreenReaderText>
+                      </TableSortLabel>
+                    ) : (
+                      col.label
+                    )}
                   </TableCell>
                 ))}
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+            </TableHead>
+            <TableBody>
+              {tableData.map((row) => (
+                <TableRow key={uuidv4()}>
+                  {Object.keys(row).map((k, i) => (
+                    <TableCell
+                      key={uuidv4()}
+                      data-test-id={`table-data-cell-${data.cols[i].id}`}
+                    >
+                      {row[k].label}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        )}
       </TableContainer>
 
       {!!data.rows.length && (
