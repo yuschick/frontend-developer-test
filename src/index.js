@@ -7,7 +7,6 @@ import App from "./routes/App";
 const GlobalStyle = createGlobalStyle`
   :root {
     --spacing-unit: 8px;
-    --spacing-half: 4px;
     --spacing-one: 8px;
     --spacing-two: 16px;
     --spacing-three: 24px;

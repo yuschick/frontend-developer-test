@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { Button, CircularProgress, Typography } from "@material-ui/core";
 import { bool, func } from "prop-types";
 
-const DataTable = ({ fetch, loading, error, complete }) => {
+const TableActions = ({ fetch, loading, error, complete }) => {
   const isMounted = useRef(false);
 
   useEffect(() => {
@@ -42,11 +42,11 @@ const ActionsContainer = styled.div`
   place-items: center;
 `;
 
-DataTable.props = {
+TableActions.props = {
   fetch: func.isRequired,
   loading: bool.isRequired,
   error: bool.isRequired,
   complete: bool.isRequired,
 };
 
-export default DataTable;
+export default TableActions;
